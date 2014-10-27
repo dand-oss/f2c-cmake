@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "arith.h"
+//#include "arith.h"
 
 #define TYSHORT 2
 #define TYLONG 3
@@ -157,7 +157,7 @@ _uninit_f2c(void *x, int type, long len)
 ieee0(Void)
 {
 #ifndef __alpha
-	_control87(EM_DENORMAL | EM_UNDERFLOW | EM_INEXACT, MCW_EM);
+	_control87(_EM_DENORMAL | _EM_UNDERFLOW | _EM_INEXACT, _MCW_EM);
 #endif
 	/* With MS VC++, compiling and linking with -Zi will permit */
 	/* clicking to invoke the MS C++ debugger, which will show */
