@@ -1,0 +1,23 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+if(NOT TARGET f2c::f2c)
+    include("${CMAKE_CURRENT_LIST_DIR}/f2cTargets.cmake")
+endif()
+
+# Set convenience variables for consumers
+if(TARGET f2c::f2c)
+    get_target_property(F2C_EXECUTABLE f2c::f2c IMPORTED_LOCATION)
+    if(NOT F2C_EXECUTABLE)
+        # Try other configurations if IMPORTED_LOCATION is not set
+        get_target_property(F2C_EXECUTABLE f2c::f2c IMPORTED_LOCATION_RELEASE)
+        if(NOT F2C_EXECUTABLE)
+            get_target_property(F2C_EXECUTABLE f2c::f2c IMPORTED_LOCATION_DEBUG)
+        endif()
+    endif()
+endif()
+
+set(F2C_FOUND TRUE)
+
+check_required_components(@PROJECT_NAME@)
