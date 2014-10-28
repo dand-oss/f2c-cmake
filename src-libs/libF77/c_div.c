@@ -6,10 +6,10 @@ extern "C" {
 #ifdef KR_headers
 extern VOID sig_die();
 VOID c_div(c, a, b)
-complex *a, *b, *c;
+fcomplex *a, *b, *c;
 #else
 extern void sig_die(char*,int);
-void c_div(complex *c, complex *a, complex *b)
+void c_div(fcomplex *c, fcomplex *a, fcomplex *b)
 #endif
 {
 	double ratio, den;
