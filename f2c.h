@@ -13,7 +13,7 @@ typedef char *address;
 typedef short int shortint;
 typedef float real;
 typedef double doublereal;
-typedef struct { real r, i; } complex;
+typedef struct { real r, i; } fcomplex;
 typedef struct { doublereal r, i; } doublecomplex;
 typedef long int logical;
 typedef short int shortlogical;
@@ -131,7 +131,7 @@ union Multitype {	/* for multiple entry points */
 	/* longint j; */
 	real r;
 	doublereal d;
-	complex c;
+	fcomplex c;
 	doublecomplex z;
 	};
 
@@ -193,9 +193,9 @@ typedef /* Character */ VOID (*H_fp)();
 typedef /* Subroutine */ int (*S_fp)();
 #endif
 /* E_fp is for real functions when -R is not specified */
-typedef VOID C_f;	/* complex function */
+typedef VOID C_f;	/* fcomplex function */
 typedef VOID H_f;	/* character function */
-typedef VOID Z_f;	/* double complex function */
+typedef VOID Z_f;	/* double fcomplex function */
 typedef doublereal E_f;	/* real function with -R not specified */
 
 /* undef any lower-case symbols that your C compiler predefines, e.g.: */
