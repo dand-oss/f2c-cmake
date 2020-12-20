@@ -14,6 +14,13 @@ project(
     DESCRIPTION "netlib f2c"
     )
 
+###############
+# ASI default settings
+list(APPEND CMAKE_MODULE_PATH "$ENV{ASV_CMAKE}")
+include(asv_cmake_defaults)
+asv_cmake_defaults( )
+###############
+
 option(BUILD_SHARED_LIB "Build shared library (DLL)." ON)
 
 include(GNUInstallDirs)
