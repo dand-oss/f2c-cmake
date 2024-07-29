@@ -109,6 +109,7 @@ rmtdir(Void)
 	char *s;
 	if (*(s = tmpdir)) {
 		tmpdir = "";
+        int rmdir(const char *path); // supposedly unistd.h
 		rmdir(s);
 		}
 	}
@@ -117,7 +118,7 @@ rmtdir(Void)
 #ifndef MSDOS
 #include "sysdep.hd"
 #ifndef NO_MKDTEMP
-#include <unistd.h> /* for mkdtemp */
+#include <unistd.h> /* for mkdtemp, rmdir */
 #endif
 #endif
 
