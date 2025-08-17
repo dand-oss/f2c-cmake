@@ -1,38 +1,53 @@
-# Copyright (c) 2014 by AppSmiths Ventures LLP.  All Rights Reserved.
-#
-# All material is proprietary to AppSmiths Ventures LLP and may be used only
-# pursuant to license rights granted by AppSmiths Ventures LLP  Other
-# reproduction, distribution, or use is strictly prohibited.
-#
 cmake_minimum_required(VERSION 3.30)
-project(libI77 C)
+
+project(libI77
+    VERSION 1.1.0
+    LANGUAGES C
+)
 
 set(libname "I77")
 
 if (BUILD_SHARED_LIB)
     add_library(${libname} SHARED)
-    set_target_properties(${libname} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set_target_properties(${libname}
+        PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
     if (MSVC)
-        target_compile_definitions(${libname} PRIVATE _CRT_SECURE_NO_WARNINGS)
-    endif (MSVC)
+        target_compile_definitions(${libname}
+            PRIVATE _CRT_SECURE_NO_WARNINGS
+        )
+    endif()
     if (UNIX)
-        # force linker to resolve all deps
-        set_target_properties(${libname} PROPERTIES LINK_FLAGS "-Wl,--no-undefined")
-    endif (UNIX)
-else (BUILD_SHARED_LIB)
-    add_library(${libname})
-endif (BUILD_SHARED_LIB)
+        set_target_properties(${libname}
+            PROPERTIES LINK_FLAGS "-Wl,--no-undefined"
+        )
+    endif()
+else()
+    add_library(${libname} STATIC)
+endif()
 
 if (WIN32)
-    target_compile_definitions(${libname} PRIVATE MSDOS)
-    target_compile_definitions(${libname} PRIVATE SYSDEP_H_INCLUDED)
+    target_compile_definitions(${libname}
+        PRIVATE MSDOS SYSDEP_H_INCLUDED
+    )
     if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:${libname}> DESTINATION bin OPTIONAL)
-    endif (MSVC)
-endif (WIN32)
-target_compile_definitions(${libname} PUBLIC INTEGER_STAR_8)
-#DNO_LONG_LONG
-target_include_directories(${libname} PRIVATE ../..)
+        install(FILES $<TARGET_PDB_FILE:${libname}>
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            OPTIONAL
+        )
+    endif()
+endif()
+
+target_compile_definitions(${libname}
+    PUBLIC INTEGER_STAR_8
+)
+
+target_include_directories(${libname}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libI77>
+)
+
 target_sources(${libname} PRIVATE
     backspace.c
     close.c
@@ -70,10 +85,18 @@ target_sources(${libname} PRIVATE
     wsne.c
     xwsne.c
     sig_die.c
-    )
+)
 
+# Install library and register in f2cTargets
 install(TARGETS ${libname}
-	ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
-	)
+    EXPORT f2cTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Install public headers for libI77
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libI77
+    FILES_MATCHING PATTERN "*.h"
+)

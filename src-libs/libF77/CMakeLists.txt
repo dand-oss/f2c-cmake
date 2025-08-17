@@ -1,38 +1,49 @@
-# Copyright (c) 2014 by AppSmiths Ventures LLP.  All Rights Reserved.
-#
-# All material is proprietary to AppSmiths Ventures LLP and may be used only
-# pursuant to license rights granted by AppSmiths Ventures LLP  Other
-# reproduction, distribution, or use is strictly prohibited.
-#
 cmake_minimum_required(VERSION 3.30)
-project(libF77 C)
+
+project(libF77
+    VERSION 1.1.0
+    LANGUAGES C
+)
 
 set(libname "F77")
 
 if (BUILD_SHARED_LIB)
     add_library(${libname} SHARED)
     target_link_libraries(${libname} PRIVATE I77)
-    set_target_properties(${libname} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set_target_properties(${libname}
+        PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON
+    )
     if (MSVC)
-        target_compile_definitions(${libname} PRIVATE _CRT_SECURE_NO_WARNINGS)
-    endif (MSVC)
-    if (UNIX)
-        # force linker to resolve all deps
-        #        set_target_properties(${libname} PROPERTIES LINK_FLAGS "-Wl,--no-undefined")
-    endif (UNIX)
-else (BUILD_SHARED_LIB)
-    add_library(${libname})
-endif (BUILD_SHARED_LIB)
+        target_compile_definitions(${libname}
+            PRIVATE _CRT_SECURE_NO_WARNINGS
+        )
+    endif()
+else()
+    add_library(${libname} STATIC)
+endif()
 
 if (WIN32)
-    target_compile_definitions(${libname} PRIVATE MSDOS)
+    target_compile_definitions(${libname}
+        PRIVATE MSDOS
+    )
     if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:${libname}> DESTINATION bin OPTIONAL)
-    endif (MSVC)
-endif (WIN32)
-target_compile_definitions(${libname} PUBLIC INTEGER_STAR_8)
-#DNO_LONG_LONG
-target_include_directories(${libname} PRIVATE ../..)
+        install(FILES $<TARGET_PDB_FILE:${libname}>
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            OPTIONAL
+        )
+    endif()
+endif()
+
+target_compile_definitions(${libname}
+    PUBLIC INTEGER_STAR_8
+)
+
+target_include_directories(${libname}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libF77>
+)
+
 target_sources(${libname} PRIVATE
     abort_.c
     c_abs.c
@@ -96,7 +107,7 @@ target_sources(${libname} PRIVATE
     i_indx.c
     i_len.c
     i_mod.c
-    i_nint.c
+    i_mint.c
     i_sign.c
     l_ge.c
     l_gt.c
@@ -155,8 +166,16 @@ target_sources(${libname} PRIVATE
     z_sqrt.c
 )
 
+# Install library and register in f2cTargets
 install(TARGETS ${libname}
-	ARCHIVE DESTINATION lib
-       	LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
-	)
+    EXPORT f2cTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# Install public headers for libF77
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libF77
+    FILES_MATCHING PATTERN "*.h"
+)
