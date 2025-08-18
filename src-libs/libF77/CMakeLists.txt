@@ -163,6 +163,8 @@ target_sources(${libname} PRIVATE
     z_log.c
     z_sin.c
     z_sqrt.c
+
+    signal1.h
 )
 
 # Install library and register in f2cTargets

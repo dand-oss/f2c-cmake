@@ -82,6 +82,13 @@ target_sources(${libname} PRIVATE
     wsne.c
     xwsne.c
     sig_die.c
+
+    fio.h
+    fmt.h
+    fp.h
+    lio.h
+    rawio.h
+    sysdep1.h
 )
 
 # Install library and register in f2cTargets
