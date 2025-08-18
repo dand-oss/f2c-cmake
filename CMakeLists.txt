@@ -23,6 +23,9 @@ add_subdirectory(src)
 add_subdirectory(src-libs/libI77)
 add_subdirectory(src-libs/libF77)
 
+print_target_properties(I77)
+print_target_properties(F77)
+
 # Install top-level public header
 install(FILES
     ${CMAKE_SOURCE_DIR}/f2c.h
