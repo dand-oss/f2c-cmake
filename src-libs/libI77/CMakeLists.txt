@@ -26,27 +26,24 @@ else()
     add_library(${libname} STATIC)
 endif()
 
-if (WIN32)
-    target_compile_definitions(${libname}
-        PRIVATE MSDOS SYSDEP_H_INCLUDED
-    )
-    if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:${libname}>
-            DESTINATION ${CMAKE_INSTALL_BINDIR}
-            OPTIONAL
-        )
-    endif()
-endif()
-
-target_compile_definitions(${libname}
-    PUBLIC INTEGER_STAR_8
-)
-
 target_include_directories(${libname}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libI77>
 )
+
+target_compile_definitions(${libname}
+    PUBLIC INTEGER_STAR_8
+)
+
+if (WIN32)
+    target_compile_definitions(${libname}
+        PRIVATE MSDOS SYSDEP_H_INCLUDED
+    )
+    if (MSVC)
+        install_pdb()
+    endif()
+endif()
 
 target_sources(${libname} PRIVATE
     backspace.c

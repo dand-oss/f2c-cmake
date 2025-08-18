@@ -8,6 +8,7 @@ project(libF77
 set(libname "F77")
 
 if (BUILD_SHARED_LIB)
+    # shared library
     add_library(${libname} SHARED)
     target_link_libraries(${libname} PRIVATE I77)
     set_target_properties(${libname}
@@ -19,30 +20,28 @@ if (BUILD_SHARED_LIB)
         )
     endif()
 else()
+    # static library
     add_library(${libname} STATIC)
 endif()
-
-if (WIN32)
-    target_compile_definitions(${libname}
-        PRIVATE MSDOS
-    )
-    if (MSVC)
-        install(FILES $<TARGET_PDB_FILE:${libname}>
-            DESTINATION ${CMAKE_INSTALL_BINDIR}
-            OPTIONAL
-        )
-    endif()
-endif()
-
-target_compile_definitions(${libname}
-    PUBLIC INTEGER_STAR_8
-)
 
 target_include_directories(${libname}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libF77>
 )
+
+target_compile_definitions(${libname}
+    PUBLIC INTEGER_STAR_8
+)
+
+if (WIN32)
+    target_compile_definitions(${libname}
+        PRIVATE MSDOS
+    )
+    if (MSVC)
+        install_pdb()
+    endif()
+endif()
 
 target_sources(${libname} PRIVATE
     abort_.c
@@ -107,7 +106,7 @@ target_sources(${libname} PRIVATE
     i_indx.c
     i_len.c
     i_mod.c
-    i_mint.c
+    i_nint.c
     i_sign.c
     l_ge.c
     l_gt.c
