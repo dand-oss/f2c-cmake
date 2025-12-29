@@ -72,6 +72,7 @@ static void do_p1_subr_ret Argdcl((FILEP, FILEP));
 static int get_p1_token Argdcl((FILEP));
 static int p1get_const Argdcl((FILEP, int, Constp*));
 static int p1getd Argdcl((FILEP, long int*));
+static int p1getp Argdcl((FILEP, void**));
 static int p1getf Argdcl((FILEP, char**));
 static int p1getn Argdcl((FILEP, int, char**));
 static int p1gets Argdcl((FILEP, char*, int));
@@ -381,13 +382,13 @@ do_p1_name_pointer(FILE *infile)
     Namep namep = (Namep) NULL;
     int status;
 
-    status = p1getd (infile, (long *) &namep);
+    status = p1getp (infile, (void **) &namep);
 
     if (status == EOF)
 	err ("do_p1_name_pointer:  Missing pointer at end of file\n");
     else if (status == 0 || namep == (Namep) NULL)
-	erri ("do_p1_name_pointer:  Illegal name pointer in p1 file: '#%lx'\n",
-		(unsigned long) namep);
+	erri ("do_p1_name_pointer:  Illegal name pointer in p1 file: '#%" PRIxPTR "'\n",
+		(uintptr_t) namep);
 
     return (expptr) namep;
 } /* do_p1_name_pointer */
@@ -2328,7 +2329,7 @@ p1get_const(FILE *infile, int type, struct Constblock **resultp)
 #endif
 {
     int status;
-    unsigned long a;
+    uintptr_t a;
     struct Constblock *result;
 
 	if (type != TYCHAR) {
@@ -2364,7 +2365,7 @@ p1get_const(FILE *infile, int type, struct Constblock **resultp)
 	    result->vstg = 1;
 	    break;
 	case TYCHAR:
-	    status = fscanf(infile, "%lx", &a);
+	    status = fscanf(infile, "%" SCNxPTR, &a);
 	    *resultp = (struct Constblock *) a;
 	    break;
 	default:
@@ -2387,6 +2388,26 @@ p1getd(FILE *infile, long *result)
 {
     return fscanf (infile, "%ld", result);
 } /* p1getd */
+
+
+/* p1getp -- Read a pointer value from the Pass 1 intermediate file.
+   Uses SCNxPTR for portable 32/64-bit pointer input. */
+
+ static int
+#ifdef KR_headers
+p1getp(infile, result)
+	FILE *infile;
+	void **result;
+#else
+p1getp(FILE *infile, void **result)
+#endif
+{
+    uintptr_t val;
+    int status = fscanf (infile, "%" SCNxPTR, &val);
+    if (status == 1)
+	*result = (void *)val;
+    return status;
+} /* p1getp */
 
  static int
 #ifdef KR_headers
