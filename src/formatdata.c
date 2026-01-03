@@ -31,7 +31,7 @@ use or performance of this software.
 
 static int memno2info Argdcl((int, Namep*));
 
-typedef unsigned long Ulong;
+typedef uintptr_t Ulong;
 
  extern char *initbname;
 
