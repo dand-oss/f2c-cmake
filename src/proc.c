@@ -1146,7 +1146,7 @@ copy_data(chainp list)
 	    namep -> vleng = (expptr) cpexpr (namep -> vleng);
 	if (namep -> vdim) {
 	    nd = namep -> vdim -> ndim;
-	    size = sizeof(int) + (3 + 2 * nd) * sizeof (expptr);
+	    size = sizeof(struct Dimblock) + (nd - 1) * 2 * sizeof(expptr);
 	    dp = (struct Dimblock *) ckalloc (size);
 	    cpn(size, (char *)namep->vdim, (char *)dp);
 	    namep -> vdim = dp;
@@ -1698,7 +1698,7 @@ setbound(Namep v, int nd, struct Dims *dims)
 	}
 
 	v->vdim = p = (struct Dimblock *)
-	    ckalloc( sizeof(int) + (3+2*nd)*sizeof(expptr) );
+	    ckalloc( sizeof(struct Dimblock) + (nd - 1) * 2 * sizeof(expptr) );
 	p->ndim = nd--;
 	p->nelt = ICON(1);
 	doin_setbound = 1;
