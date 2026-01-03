@@ -51,8 +51,8 @@ gmem(int n, int round)
 		if ((int)next & 1)
 			next++;
 #else
-		next = (char *)(((long)next + sizeof(char *)-1)
-				& ~((long)sizeof(char *)-1));
+		next = (char *)(((uintptr_t)next + sizeof(char *)-1)
+				& ~((uintptr_t)sizeof(char *)-1));
 #endif
 #endif
 	rv = next;
@@ -109,8 +109,8 @@ mem(int n, int round)
 		if ((int)mem_next & 1)
 			mem_next++;
 #else
-		mem_next = (char *)(((long)mem_next + sizeof(char *)-1)
-				& ~((long)sizeof(char *)-1));
+		mem_next = (char *)(((uintptr_t)mem_next + sizeof(char *)-1)
+				& ~((uintptr_t)sizeof(char *)-1));
 #endif
 #endif
 	rv = mem_next;
