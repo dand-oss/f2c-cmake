@@ -6,8 +6,8 @@
 
 #define M(x) (1<<x)	/* Mask (x) returns 2^x */
 
-#define ALLOC(x)	(struct x *) ckalloc((int)sizeof(struct x))
-#define ALLEXPR		(expptr) ckalloc((int)sizeof(union Expression) )
+#define ALLOC(x)	(struct x *) ckalloc(sizeof(struct x))
+#define ALLEXPR		(expptr) ckalloc(sizeof(union Expression) )
 typedef int *ptr;
 typedef char *charptr;
 typedef FILE *FILEP;
