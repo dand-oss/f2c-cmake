@@ -130,9 +130,9 @@ op_assign(int opcode)
  char *
 #ifdef KR_headers
 Alloc(n)
-	int n;
+	size_t n;
 #else
-Alloc(int n)
+Alloc(size_t n)
 #endif
 		/* error-checking version of malloc */
 		/* ckalloc initializes memory to 0; Alloc does not */
@@ -142,7 +142,7 @@ Alloc(int n)
 
 	rv = (char*)malloc(n);
 	if (!rv) {
-		sprintf(errbuf, "malloc(%d) failure!", n);
+		sprintf(errbuf, "malloc(%zu) failure!", n);
 		Fatal(errbuf);
 		}
 	ck_track(rv);
@@ -1009,9 +1009,9 @@ mkiodo(chainp dospec, chainp list)
  ptr
 #ifdef KR_headers
 ckalloc(n)
-	register int n;
+	size_t n;
 #else
-ckalloc(register int n)
+ckalloc(size_t n)
 #endif
 {
 	register ptr p;
@@ -1020,7 +1020,7 @@ ckalloc(register int n)
 		ck_track(p);
 		return(p);
 	}
-	fprintf(stderr, "failing to get %d bytes\n",n);
+	fprintf(stderr, "failing to get %zu bytes\n",n);
 	Fatal("out of memory");
 	/* NOT REACHED */ return 0;
 }

@@ -776,7 +776,7 @@ extern char *c_keywords[];
 #define Void void
 #endif
 
-char*	Alloc Argdcl((int));
+char*	Alloc Argdcl((size_t));
 char*	Argtype Argdcl((int, char*));
 void	Fatal Argdcl((char*));
 struct	Impldoblock* mkiodo Argdcl((chainp, chainp));
@@ -810,7 +810,7 @@ tagptr	callk Argdcl((int, char*, chainp));
 void	cast_args Argdcl((int, chainp));
 char*	cds Argdcl((char*, char*));
 void	changedtype Argdcl((Namep));
-ptr	ckalloc Argdcl((int));
+ptr	ckalloc Argdcl((size_t));
 int	cktype Argdcl((int, int, int));
 void	clf Argdcl((FILEP*, char*, int));
 int	cmpstr Argdcl((char*, char*, long, long));
