@@ -27,6 +27,11 @@ use or performance of this software.
 #include "defines.h"
 #include "machdefs.h"
 
+/* Memory tracking for leak-free exit */
+void ck_tracked_free(void *p);
+void ckfree_all(void);
+#define free(p) ck_tracked_free(p)
+
 #define MAXDIM 20
 #define MAXINCLUDES 10
 #define MAXLITERALS 200		/* Max number of constants in the literal

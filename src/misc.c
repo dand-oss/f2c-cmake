@@ -21,8 +21,58 @@ other tortious action, arising out of or in connection with the
 use or performance of this software.
 ****************************************************************/
 
+/* Include stdlib BEFORE defs.h to save real free/realloc before macro hijacks them */
+#include <stdlib.h>
+
+/* Save real functions before defs.h redefines free() */
+static void (*stdlib_free)(void*) = free;
+static void *(*stdlib_realloc)(void*, size_t) = realloc;
+
 #include "defs.h"
 #include "limits.h"
+
+/* Allocation tracking for leak-free exit */
+static void **ck_alloc_list = NULL;
+static size_t ck_alloc_count = 0;
+static size_t ck_alloc_cap = 0;
+
+static void ck_track(void *p) {
+	if (!p) return;
+	if (ck_alloc_count >= ck_alloc_cap) {
+		size_t newcap = ck_alloc_cap ? ck_alloc_cap * 2 : 16384;
+		void **newlist = stdlib_realloc(ck_alloc_list, newcap * sizeof(void*));
+		if (!newlist) return;
+		ck_alloc_list = newlist;
+		ck_alloc_cap = newcap;
+	}
+	ck_alloc_list[ck_alloc_count++] = p;
+}
+
+static void ck_untrack(void *p) {
+	size_t i;
+	for (i = 0; i < ck_alloc_count; i++) {
+		if (ck_alloc_list[i] == p) {
+			ck_alloc_list[i] = NULL;
+			return;
+		}
+	}
+}
+
+void ck_tracked_free(void *p) {
+	ck_untrack(p);
+	stdlib_free(p);
+}
+
+void ckfree_all(void) {
+	size_t i;
+	for (i = 0; i < ck_alloc_count; i++) {
+		if (ck_alloc_list[i])
+			stdlib_free(ck_alloc_list[i]);
+	}
+	stdlib_free(ck_alloc_list);
+	ck_alloc_list = NULL;
+	ck_alloc_count = ck_alloc_cap = 0;
+}
 
  int
 #ifdef KR_headers
@@ -95,6 +145,7 @@ Alloc(int n)
 		sprintf(errbuf, "malloc(%d) failure!", n);
 		Fatal(errbuf);
 		}
+	ck_track(rv);
 	return rv;
 	}
 
@@ -965,8 +1016,10 @@ ckalloc(register int n)
 {
 	register ptr p;
 	p = (ptr)calloc(1, (unsigned) n);
-	if (p || !n)
+	if (p || !n) {
+		ck_track(p);
 		return(p);
+	}
 	fprintf(stderr, "failing to get %d bytes\n",n);
 	Fatal("out of memory");
 	/* NOT REACHED */ return 0;

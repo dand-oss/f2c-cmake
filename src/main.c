@@ -788,5 +788,6 @@ done(int k)
 	clf(&c_file, "c_file", 0);
 	clf(&pass1_file, "pass1_file", 0);
 	Un_link_all(k);
+	ckfree_all();
 	exit(k|retcode);
 }
