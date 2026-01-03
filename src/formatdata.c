@@ -366,7 +366,7 @@ wr_one_init(FILE *outfile, char *varname, chainp *Values, int keepit)
 			write_char_init(outfile, Values, namep);
 			goto done;
 			}
-		last = ((long) ((chainp) values->datap)->datap) / size;
+		last = ((intptr_t) ((chainp) values->datap)->datap) / size;
 		if (last - loc > 4) {
 			write_char_init(outfile, Values, namep);
 			goto done;
@@ -580,7 +580,7 @@ wr_array_init(FILE *outfile, int type, chainp values)
     while (values) {
 	struct Constblock Const;
 
-	index = ((long) ((chainp) values->datap)->datap) / size;
+	index = ((intptr_t) ((chainp) values->datap)->datap) / size;
 	while (index > main_index) {
 
 /* Fill with zeros.  The structure shorthand works because the compiler
