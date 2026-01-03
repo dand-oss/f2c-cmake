@@ -773,7 +773,7 @@ yyparse(void)
 	yychar = -1;
 	yynerrs = 0;
 	yyerrflag = 0;
-	yyp = &yys[-1];
+	yyp = yys - 1;
 	goto yystack;
 
 ret0:
