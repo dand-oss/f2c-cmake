@@ -36,6 +36,7 @@ static void p1_literal Argdcl((long int));
 static void p1_name Argdcl((Namep));
 static void p1_unary Argdcl((Exprp));
 static void p1putd Argdcl((int, long int));
+static void p1putp Argdcl((int, void*));
 static void p1putdd Argdcl((int, int, int));
 static void p1putddd Argdcl((int, int, int, int));
 static void p1putdds Argdcl((int, int, int, char*));
@@ -90,7 +91,7 @@ p1_name(namep)
 p1_name(Namep namep)
 #endif
 {
-	p1putd (P1_NAME_POINTER, (long) namep);
+	p1putp (P1_NAME_POINTER, namep);
 	namep->visused = 1;
 } /* p1_name */
 
@@ -206,8 +207,8 @@ p1_const(register Constp cp)
 	    if (vleng && !ISICON (vleng))
 		err("p1_const:  bad vleng\n");
 	    else
-		fprintf(pass1_file, "%d: %d %lx\n", P1_CONST, type,
-			(unsigned long)cpexpr((expptr)cp));
+		fprintf(pass1_file, "%d: %d %" PRIxPTR "\n", P1_CONST, type,
+			(uintptr_t)cpexpr((expptr)cp));
 	    break;
 	default:
 	    erri ("p1_const:  bad constant type '%d'", type);
@@ -623,6 +624,22 @@ p1putd(int type, long value)
 {
     fprintf (pass1_file, "%d: %ld\n", type, value);
 } /* p1_putd */
+
+
+/* p1putp -- Put a typed pointer into the Pass 1 intermediate file.
+   Uses PRIxPTR for portable 32/64-bit pointer output. */
+
+ static void
+#ifdef KR_headers
+p1putp(type, ptr)
+	int type;
+	void *ptr;
+#else
+p1putp(int type, void *ptr)
+#endif
+{
+    fprintf (pass1_file, "%d: %" PRIxPTR "\n", type, (uintptr_t)ptr);
+} /* p1putp */
 
 
 /* p1putdd -- Put a typed pair of integers into the intermediate file. */

@@ -60,6 +60,8 @@ use or performance of this software.
 #ifdef ANSI_Libraries
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
 #else
 char *calloc(), *malloc(), *realloc();
 void *memcpy(), *memset();
