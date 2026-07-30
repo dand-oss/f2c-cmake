@@ -1672,7 +1672,8 @@ store_comment(char *str)
 		return;
 		}
 	len = strlen(str) + 1;
-	if (cbnext + len > cblast) {
+	/* cbnext and cblast are both null until the first comment buffer. */
+	if (!cbnext || cbnext + len > cblast) {
 		ncb = 0;
 		if (cbcur) {
 			cbcur->last = cbnext;

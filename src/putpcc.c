@@ -91,12 +91,11 @@ putif(register expptr p, int else_if_p)
 		}
 	else {
 		if (else_if_p) {
-			if (ei_next >= ei_last)
+			if (!ei_next || ei_next == ei_last)
 				{
-				k = ei_last - ei_first;
+				k = ei_next ? ei_last - ei_first : 0;
 				n = k + 100;
 				ei_next = mem(n,0);
-				ei_last = ei_first + n;
 				if (k)
 					memcpy(ei_next, ei_first, k);
 				ei_first =  ei_next;
@@ -2131,12 +2130,11 @@ putwhile(expptr p)
 {
 	int k, n;
 
-	if (wh_next >= wh_last)
+	if (!wh_next || wh_next == wh_last)
 		{
-		k = wh_last - wh_first;
+		k = wh_next ? wh_last - wh_first : 0;
 		n = k + 100;
 		wh_next = mem(n,0);
-		wh_last = wh_first + n;
 		if (k)
 			memcpy(wh_next, wh_first, k);
 		wh_first =  wh_next;

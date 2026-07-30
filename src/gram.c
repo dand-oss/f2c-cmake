@@ -757,7 +757,8 @@ yyparse(void)
 	{
 		YYSTYPE	yyv;
 		int	yys;
-	} yys[YYMAXDEPTH], *yyp, *yypt;
+	/* Keep a real sentinel slot before the yacc stack. */
+	} yys[YYMAXDEPTH + 1], *yyp, *yypt;
 	short *yyxi;
 	int yyj, yym, yystate, yyn, yyg;
 	YYSTYPE save1, save2;
@@ -773,7 +774,8 @@ yyparse(void)
 	yychar = -1;
 	yynerrs = 0;
 	yyerrflag = 0;
-	yyp = yys - 1;
+	/* yystack increments yyp before storing the initial state. */
+	yyp = yys;
 	goto yystack;
 
 ret0:
@@ -797,7 +799,7 @@ yystack:
 		printf("char %s in %s", yytokname(yychar), yystatname(yystate));
 
 	yyp++;
-	if(yyp >= &yys[YYMAXDEPTH]) { 
+	if(yyp >= &yys[YYMAXDEPTH + 1]) {
 		yyerror("yacc stack overflow"); 
 		goto ret1; 
 	}

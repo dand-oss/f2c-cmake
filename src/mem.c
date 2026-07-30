@@ -42,7 +42,7 @@ gmem(int n, int round)
 {
 	static char *last, *next;
 	char *rv;
-	if (round)
+	if (round && next)
 #ifdef CRAY
 		if ((long)next & 0xe000000000000000)
 			next = (char *)(((long)next & 0x1fffffffffffffff) + 1);
@@ -55,12 +55,15 @@ gmem(int n, int round)
 				& ~((uintptr_t)sizeof(char *)-1));
 #endif
 #endif
-	rv = next;
-	if ((next += n) > last) {
+	if (!next || n > last - next) {
 		rv = Alloc(n + GMEMBSIZE);
 
 		next = rv + n;
 		last = next + GMEMBSIZE;
+		}
+	else {
+		rv = next;
+		next += n;
 		}
 	return rv;
 	}
